@@ -2,7 +2,7 @@
 
 ## What is this?
 
-A complete desktop browser party game for 2–8 friends. Everyone wears absurd
+A browser party game for 2–8 friends, with keyboard/mouse and phone touch controls. Everyone wears absurd
 thrifted boots, throws TNT, eats suspicious mushrooms, and competes for the most
 chaos points during a five-minute round. A full meter unlocks ten seconds of
 excessive **URRRR MODE**.
@@ -89,7 +89,8 @@ Subsequent pushes to `main` automatically rebuild and publish the game.
 7. They click **JOIN GAME**.
 8. Enter the room code (the six-character suffix also works).
 9. Once everyone appears in the lobby, the host clicks **START THE MAYHEM**.
-10. Click the forest to capture the mouse. Escape releases it.
+10. On desktop, click the forest to capture the mouse; Escape releases it.
+    On a phone, use the on-screen joystick and action buttons immediately.
 
 The host can start alone, which is useful for checking the game. Solo Practice
 uses the same simulation without connecting to PeerJS and cannot accept guests.
@@ -116,8 +117,32 @@ are not implemented.
 | Escape | Release mouse / open game menu |
 
 The game menu does not pause a multiplayer round. Settings provide volume,
-mouse sensitivity, graphics quality, and reduced camera shake/flashing. Desktop
-keyboard and mouse are recommended; mobile browsers display that recommendation.
+camera sensitivity, control mode, graphics quality, and reduced camera
+shake/flashing. Phones automatically show touch controls and default to Low
+Power graphics unless you have already saved a graphics preference. Settings
+can force Touch Controls or Keyboard + Mouse on hybrid devices.
+
+### Phone / tablet controls
+
+| Touch control | Action |
+| --- | --- |
+| Left joystick | Move relative to the camera; small drags move more slowly |
+| Swipe the right side of the forest | Look / aim, while the left thumb keeps moving |
+| RUN | Toggle sprint; tap again to turn it off |
+| JUMP / STOMP | Jump; tap again while airborne for a boot stomp |
+| TNT | Throw one TNT per tap |
+| GRAB | Collect a nearby mushroom or TNT crate |
+| SHROOM | Use your held mushroom |
+| URRRR | Activate when the meter is full; the button lights up when ready |
+| Ⅱ at the top right | Open the game menu |
+
+Landscape gives the controls more room, and portrait also works. The mobile HUD
+moves above the thumb controls and leaves space for phone safe areas. No pointer
+lock is needed for touch. Holding the joystick and swiping to aim uses separate
+contacts; action buttons work while another finger holds the joystick. Pausing,
+changing control mode, rotating the device, losing focus, or leaving the page
+clears contacts and sprint so movement cannot remain stuck. Touch controls send
+the same validated input packets to the host as desktop controls.
 
 ## Mushrooms, chaos, and scoring
 
@@ -183,6 +208,7 @@ src/Simulation.js             Authoritative rules, rounds, scores, world state
 src/NetworkManager.js         PeerJS rooms, connections, rate limits, heartbeats
 src/Protocol.js               Packet validation and room code utilities
 src/InputController.js        Keyboard, pointer lock, queued actions
+src/TouchControls.js          Multi-touch joystick, swipe aiming, action buttons
 src/Physics.js                Acceleration, gravity, collisions, impulses
 src/WorldLayout.js            Shared terrain, structures, ramps, spawns, trees
 src/World.js                  Procedural arena, batched static meshes, items
@@ -213,7 +239,9 @@ disables shadows and lowers render resolution.
 cross-network WebRTC were intentionally left for manual testing; no browser or
 interactive session was opened during implementation. Automated tests cover
 gameplay rules, malicious packets, interpolation, lifecycle behavior, scene
-construction, and a full eight-player simulation.
+construction, touch/desktop input behavior, and a full eight-player simulation.
+Real Android/iOS gestures, visual layout, and phone performance still need manual
+device testing.
 
 Multiplayer requires internet access to PeerJS signaling. Some restrictive
 networks, VPNs, firewalls, or blocked public TURN services can prevent WebRTC
@@ -226,7 +254,10 @@ Keep the host tab visible for the smoothest play. Background browser throttling
 preserves the match clock but can reduce simulation/network frequency. Physics
 uses simple bodies and terrain/structure collisions; there are no ragdolls or
 player-to-player solid collisions. The cave and scenic props use simple geometry.
-There is one arena and one game mode, with no bots or mobile touch controls.
+There is one arena and one game mode, with no bots. Mobile devices still need a
+modern WebGL 2 browser and a network that permits WebRTC; performance depends on
+the phone. Prefer a desktop host for the smoothest multiplayer sessions, and
+keep a phone host's page visible and its screen awake during a match.
 
 ## Manual acceptance checklist
 
@@ -245,6 +276,11 @@ There is one arena and one game mode, with no bots or mobile touch controls.
 7. Finish five minutes, check the scoreboard/awards, and have the host replay.
 8. After Pages deploys, repeat joining at the repository URL; inspect for asset
    404s and verify copy-code permissions over HTTPS.
+9. On Android/iOS, test in portrait and landscape: hold the left joystick while
+   swiping with the right thumb, then tap TNT/JUMP/GRAB/SHROOM/URRRR with another
+   contact. Check RUN toggling, camera sensitivity, and the phone's safe areas.
+   Open the pause menu, rotate, and switch tabs while moving; movement should
+   stop and stay stopped after returning. Join a desktop host from the phone.
 
 To shorten a manual test round, temporarily change `roundSeconds` in
 `src/config.js`, then restore it to 300 before publishing.

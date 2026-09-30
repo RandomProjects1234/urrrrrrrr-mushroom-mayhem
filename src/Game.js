@@ -124,7 +124,8 @@ export class Game {
       case 'MATCH_START':
         this.clearCharacters(); this.effects.clear(); this.world.clearDynamic(); this.state = null;
         this.menuPlayer.root.visible = false; this.followReady = false; this.input.clear();
-        this.ui.show('hud'); this.ui.feed('THE MAYHEM HAS BEGUN. E collects. Q consumes. Space twice stomps.');
+        this.ui.show('hud'); this.ui.feed(this.ui.touchMode ? 'MOVE with the left stick. SWIPE right to aim. JUMP twice to stomp.'
+          : 'THE MAYHEM HAS BEGUN. E collects. Q consumes. Space twice stomps.');
         break;
       case 'MATCH_END': this.input.clear(); this.ui.results(message.results, this.network.isHost); this.audio.play('end'); break;
       case 'PICKUP_ADD': this.world.createItem(message.item); break;
@@ -149,6 +150,7 @@ export class Game {
       case 'PLAYER_LAUNCH': if (local) this.audio.play('launch'); break;
       case 'PLAYER_DAMAGE': if (local) this.shake = Math.min(1, this.shake + 0.25); break;
       case 'ELIMINATION': {
+        if (local) this.input.clear();
         const killer = this.state?.players.find(p => p.id === message.killer)?.name;
         this.ui.feed(killer ? `${killer} yeeted ${name}. ${message.cause}.` : `${name} had a disagreement with ${message.cause}.`); break;
       }

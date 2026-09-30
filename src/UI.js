@@ -10,19 +10,22 @@ export const hexColor = color => `#${color.toString(16).padStart(6, '0')}`;
 export class UI {
   constructor(audio) {
     this.audio = audio; this.handlers = new Map(); this.screen = 'menu'; this.feedItems = [];
-    this.settings = { volume: 45, sensitivity: 100, quality: 'high', reduceMotion: matchMedia('(prefers-reduced-motion: reduce)').matches };
+    this.coarsePointer = matchMedia('(pointer: coarse)');
+    this.settings = { volume: 45, sensitivity: 100, quality: this.coarsePointer.matches ? 'low' : 'high',
+      controls: 'auto', reduceMotion: matchMedia('(prefers-reduced-motion: reduce)').matches };
     try {
       const stored = JSON.parse(localStorage.getItem('urrr-settings') || 'null');
       if (stored && typeof stored === 'object') {
         if (Number.isFinite(stored.volume)) this.settings.volume = clamp(stored.volume, 0, 100);
         if (Number.isFinite(stored.sensitivity)) this.settings.sensitivity = clamp(stored.sensitivity, 20, 200);
         if (['low', 'high'].includes(stored.quality)) this.settings.quality = stored.quality;
+        if (['auto', 'keyboard', 'touch'].includes(stored.controls)) this.settings.controls = stored.controls;
         if (typeof stored.reduceMotion === 'boolean') this.settings.reduceMotion = stored.reduceMotion;
       }
       $('display-name').value = cleanName(localStorage.getItem('urrr-name') || 'Boot Enjoyer');
     } catch { /* Storage is optional in private/restricted browsing. */ }
     this.bind(); this.renderSettings();
-    $('mobile-notice').hidden = !(matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 1);
+    this.coarsePointer.addEventListener('change', () => this.renderSettings());
     for (const data of Object.values(MUSHROOMS)) {
       const item = node('div'); const title = node('b', '', `${data.symbol} ${data.name}`); title.style.color = hexColor(data.color);
       item.append(title, node('p', '', data.detail)); $('mushroom-guide').append(item);
@@ -62,22 +65,34 @@ export class UI {
       event.preventDefault(); this.audio.unlock(); this.emit('join', { name: this.name(), room: $('join-code').value });
     });
     document.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', () => button.closest('dialog').close()));
-    for (const id of ['volume', 'sensitivity', 'quality', 'reduce-motion']) {
+    for (const id of ['volume', 'sensitivity', 'quality', 'controls', 'reduce-motion']) {
       $(id).addEventListener('input', () => {
         this.settings = { volume: Number($('volume').value), sensitivity: Number($('sensitivity').value),
-          quality: $('quality').value, reduceMotion: $('reduce-motion').checked };
+          quality: $('quality').value, controls: $('controls').value, reduceMotion: $('reduce-motion').checked };
         this.renderSettings(); this.emit('settings', this.settings);
         try { localStorage.setItem('urrr-settings', JSON.stringify(this.settings)); } catch { /* Optional. */ }
       });
     }
   }
   renderSettings() {
-    for (const key of ['volume', 'sensitivity', 'quality']) $(key).value = this.settings[key];
+    for (const key of ['volume', 'sensitivity', 'quality', 'controls']) $(key).value = this.settings[key];
     $('reduce-motion').checked = this.settings.reduceMotion;
     $('volume-value').textContent = `${this.settings.volume}%`;
     $('sensitivity-value').textContent = `${(this.settings.sensitivity / 100).toFixed(1)}×`;
     document.body.classList.toggle('reduced-motion', this.settings.reduceMotion);
     this.audio.setVolume(this.settings.volume / 100);
+    this.setTouchMode(this.settings.controls === 'touch' || (this.settings.controls === 'auto' && this.coarsePointer.matches));
+  }
+  setTouchMode(enabled) {
+    const changed = this.touchMode !== enabled;
+    this.touchMode = enabled; document.body.classList.toggle('touch-mode', enabled);
+    $('touch-controls').hidden = !enabled || this.screen !== 'hud';
+    $('mobile-notice').hidden = !enabled || this.screen === 'hud';
+    $('capture').hidden = enabled || this.screen !== 'hud' || !!document.pointerLockElement;
+    if (changed) {
+      this.emit('release');
+      if (enabled && document.pointerLockElement) document.exitPointerLock?.();
+    }
   }
   busy(active, joining = false) {
     const buttons = joining ? ['join-submit'] : ['host', 'join-open', 'practice'];
@@ -86,13 +101,15 @@ export class UI {
     else $('host').replaceChildren(document.createTextNode(active ? 'GROWING A ROOM…' : 'HOST GAME'), node('span', '', '↗'));
   }
   show(screen) {
+    this.emit('release'); this.controlsBlocked = false;
     this.screen = screen;
     for (const name of ['menu', 'lobby', 'hud', 'results']) $(name).hidden = name !== screen;
     $('brand-bar').hidden = screen === 'hud'; $('footer').hidden = screen === 'hud';
     document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());
     if (screen !== 'hud') document.exitPointerLock?.();
     if (screen === 'menu') this.busy(false);
-    if (screen === 'hud') { $('event-feed').replaceChildren(); $('capture').hidden = false; }
+    if (screen === 'hud') $('event-feed').replaceChildren();
+    this.setTouchMode(this.touchMode);
   }
   lobby(players, room, host, localId, hostId, practice = false) {
     if (this.screen !== 'lobby') this.show('lobby');
@@ -125,13 +142,22 @@ export class UI {
     $('meter-fill').style.width = `${active ? 100 : percent}%`;
     $('meter-number').textContent = active ? `${Math.ceil(p.urrrUntil - time)}s` : `${percent}%`;
     $('meter-box').classList.toggle('ready', percent === 100 && !active); $('meter-box').classList.toggle('active', active);
-    $('meter-caption').textContent = active ? 'URRRR MODE. THESE BOOTS HAVE NO BUSINESS BEING THIS BIG.' : percent === 100 ? 'PRESS R — URRRRRRRRRRRRRRRRRRRRRR' : 'CAUSE CHAOS. FILL METER. LOSE ALL COMMON SENSE.';
+    $('meter-caption').textContent = active ? 'URRRR MODE. THESE BOOTS HAVE NO BUSINESS BEING THIS BIG.' : percent === 100
+      ? this.touchMode ? 'TAP URRRR — LOSE ALL COMMON SENSE.' : 'PRESS R — URRRRRRRRRRRRRRRRRRRRRR'
+      : 'CAUSE CHAOS. FILL METER. LOSE ALL COMMON SENSE.';
     $('respawn').hidden = p.health > 0;
     $('respawn-time').textContent = `Respawning in ${Math.max(1, Math.ceil(p.respawnAt - time))}…`;
-    $('capture').hidden = !!document.pointerLockElement || p.health <= 0;
+    this.controlsBlocked = p.health <= 0;
+    $('capture').hidden = this.touchMode || !!document.pointerLockElement || this.controlsBlocked;
+    $('touch-controls').classList.toggle('down', this.controlsBlocked);
+    for (const button of document.querySelectorAll('[data-touch-action]')) {
+      button.disabled = this.controlsBlocked || (button.dataset.touchAction === 'use' && !p.held)
+        || (button.dataset.touchAction === 'throw' && p.tnt === 0)
+        || (button.dataset.touchAction === 'urrrr' && (p.meter < 100 || active));
+    }
+    $('touch-urrrr').classList.toggle('ready', percent === 100 && !active);
     $('interact-prompt').hidden = !nearby || p.health <= 0;
-    if (nearby) $('interact-prompt').textContent = nearby.kind === 'ammo' ? 'E — COLLECT TNT ×3'
-      : `E — ${MUSHROOMS[nearby.type].name} MUSHROOM`;
+    if (nearby) $('interact-prompt').textContent = `${this.touchMode ? 'GRAB' : 'E'} — ${nearby.kind === 'ammo' ? 'COLLECT TNT ×3' : `${MUSHROOMS[nearby.type].name} MUSHROOM`}`;
     $('player-list').replaceChildren();
     for (const player of [...state.players].sort((a, b) => b.score - a.score)) {
       const row = node('div', player.id === localId ? 'you' : ''); const swatch = node('span', 'swatch');

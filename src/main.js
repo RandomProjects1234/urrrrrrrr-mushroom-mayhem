@@ -1,4 +1,5 @@
 import '../styles/style.css';
+import '../styles/touch.css';
 import { Game } from './Game.js';
 import { UI } from './UI.js';
 import { AudioManager } from './AudioManager.js';

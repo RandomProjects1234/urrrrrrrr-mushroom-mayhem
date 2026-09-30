@@ -1,0 +1,127 @@
+body { overscroll-behavior: none; }
+.touch-help { border-left: 2px solid var(--lime); padding-left: 14px; }
+#touch-controls { position: absolute; inset: 0; pointer-events: none; }
+#touch-look-zone {
+  position: absolute; top: 0; right: 0; bottom: 0; width: 52%;
+  pointer-events: auto; touch-action: none; user-select: none;
+}
+#touch-look-zone > span {
+  position: absolute; top: 49%; right: 21%; font-size: 8px;
+  letter-spacing: 1.4px; color: #f2eedb8c; pointer-events: none;
+}
+#touch-look-zone.used > span { opacity: 0; }
+.touch-movement {
+  position: absolute; left: max(18px, env(safe-area-inset-left));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  width: 126px; text-align: center;
+}
+#touch-joystick {
+  display: grid; place-items: center; position: relative; width: 126px; height: 126px;
+  border: 1px solid #f2eedb55; border-radius: 50%; background: #242e268c;
+  box-shadow: inset 0 0 0 15px #f2eedb06; pointer-events: auto; touch-action: none;
+}
+.joystick-cross { position: absolute; color: #f2eedb28; font: 48px monospace; pointer-events: none; }
+#touch-knob {
+  width: 48px; height: 48px; border-radius: 50%; border: 1px solid #c3ee809c;
+  background: #c3ee8066; box-shadow: 0 3px 12px #0004; pointer-events: none;
+}
+#touch-joystick.held { border-color: var(--lime); }
+.touch-movement > span { display: block; margin-top: 8px; color: #f2eedb99; font-size: 8px; letter-spacing: 2px; }
+.touch-actions {
+  position: absolute; right: max(18px, env(safe-area-inset-right));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  display: grid; grid-template-columns: repeat(3, 56px); gap: 8px;
+}
+.touch-actions button {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 52px; padding: 0 3px; border: 1px solid #f2eedb66; border-radius: 12px;
+  background: #242e26db; color: var(--cream); font-size: 9px; font-weight: 900;
+  letter-spacing: .5px; pointer-events: auto; touch-action: none; user-select: none;
+  -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
+}
+.touch-actions button:hover { transform: none !important; }
+.touch-actions button.held { background: #60724d; border-color: var(--lime); }
+.touch-actions button small { font-size: 7px; margin-top: 5px; letter-spacing: .4px; }
+.touch-actions button:disabled { cursor: default; opacity: .4; }
+#touch-sprint[aria-pressed="true"] { background: var(--lime); color: var(--dark); border-color: var(--lime); }
+#touch-throw { background: #d06c77e8; border-color: #ffc2c9; font-size: 16px; }
+#touch-jump { background: #42694de8; border-color: #b0d595; }
+#touch-urrrr.ready { color: var(--dark); border-color: var(--lime); background: var(--lime); box-shadow: 0 0 18px #c3ee8055; }
+#touch-controls.down .touch-movement, #touch-controls.down .touch-actions { opacity: .45; }
+.touch-mode #arena { touch-action: none; }
+.touch-mode #hud .hud-top { top: max(10px, env(safe-area-inset-top)); left: max(14px, env(safe-area-inset-left)); right: max(14px, env(safe-area-inset-right)); z-index: 2; gap: 9px; }
+.touch-mode .hud-top .arena-name { font-size: 8px; letter-spacing: .7px; }
+.touch-mode .hud-top .arena-name small { font-size: 8px; margin-top: 5px; }
+.touch-mode .match-clock { padding: 6px 9px; }
+.touch-mode .match-clock span { display: none; }
+.touch-mode .match-clock b { font-size: 21px; }
+.touch-mode .hud-button { padding: 0; min-width: 44px; min-height: 44px; touch-action: manipulation; }
+.touch-mode .hud-bottom {
+  top: calc(max(10px, env(safe-area-inset-top)) + 52px); bottom: auto;
+  width: min(450px, calc(100% - 28px - env(safe-area-inset-left) - env(safe-area-inset-right)));
+}
+.touch-mode .inventory > div { min-width: 0; padding: 7px 10px; }
+.touch-mode .inventory label { font-size: 7px; letter-spacing: .8px; margin-bottom: 4px; }
+.touch-mode .inventory b { font-size: 20px; }
+.touch-mode .inventory #health { font-size: 18px; white-space: nowrap; }
+.touch-mode .inventory #held { font-size: 13px; }
+.touch-mode .inventory kbd, .touch-mode .control-strip { display: none; }
+.touch-mode .meter-box { padding: 7px 10px; }
+.touch-mode .meter-heading b { font-size: 12px; letter-spacing: 1px; }
+.touch-mode .meter-track { height: 6px; margin: 6px 0; }
+.touch-mode #meter-caption { font-size: 7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.touch-mode .player-list { top: calc(max(10px, env(safe-area-inset-top)) + 162px); left: max(14px, env(safe-area-inset-left)); right: auto; width: 126px; padding: 5px 8px; max-height: 120px; overflow: hidden; }
+.touch-mode .player-list > div { font-size: 8px; padding: 4px 0; }
+.touch-mode .player-list > div > span:not(.swatch) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.touch-mode .event-feed { top: calc(max(10px, env(safe-area-inset-top)) + 163px); right: max(14px, env(safe-area-inset-right)); left: auto; max-width: 48%; font-size: 8px; }
+.touch-mode .event-feed > div { padding: 6px 8px; }
+.touch-mode .interact-prompt { bottom: calc(max(18px, env(safe-area-inset-bottom)) + 160px); font-size: 9px; max-width: calc(100% - 28px); white-space: normal; text-align: center; }
+.touch-mode .respawn b { font-size: clamp(30px, 8vw, 50px); }
+.touch-mode .urrr-banner { top: 33%; }
+.touch-mode .menu-screen { overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; }
+.touch-mode .menu-copy {
+  position: relative; top: auto; left: auto; transform: none; margin: 0 24px;
+  padding: calc(max(20px, env(safe-area-inset-top)) + 104px) 0 85px;
+  width: min(480px, calc(100% - 48px)); max-width: none;
+}
+.touch-mode .menu-copy h1 { font-size: clamp(44px, 11vw, 72px); }
+.touch-mode .menu-copy .urrr-title { font-size: 17px; }
+.touch-mode .menu-copy .name-field input { font-size: 16px; }
+.touch-mode .small-actions button, .touch-mode .text-button { min-height: 44px; }
+.touch-mode .small-actions { gap: 17px; }
+.touch-mode .centered { padding-top: calc(max(20px, env(safe-area-inset-top)) + 92px); padding-bottom: max(25px, env(safe-area-inset-bottom)); }
+.touch-mode .panel { touch-action: pan-y; -webkit-overflow-scrolling: touch; }
+.touch-mode .panel h2 { font-size: clamp(34px, 8vw, 48px); }
+.touch-mode #footer { padding-bottom: max(15px, env(safe-area-inset-bottom)); }
+.touch-mode #footer > span:last-child, .touch-mode .scene-caption, .touch-mode .boot-note { display: none; }
+.touch-mode #mobile-notice { padding-top: max(8px, env(safe-area-inset-top)); font-size: 8px; }
+.touch-mode #brand-bar { top: calc(max(8px, env(safe-area-inset-top)) + 24px); padding: 16px 24px; }
+.touch-mode #mobile-notice:not([hidden]) ~ #brand-bar { top: calc(max(8px, env(safe-area-inset-top)) + 24px); }
+.touch-mode .dialog-close { width: 44px; height: 44px; top: 4px; right: 5px; }
+.touch-mode .dialog-content { touch-action: pan-y; }
+.touch-mode .dialog-content > select { font-size: 16px; }
+.touch-mode #toast { bottom: calc(max(18px, env(safe-area-inset-bottom)) + 170px); }
+@media (max-width: 360px) {
+  .touch-movement, #touch-joystick { width: 104px; }
+  #touch-joystick { height: 104px; }
+  .touch-actions { grid-template-columns: repeat(3, 50px); gap: 6px; }
+  .touch-mode .inventory > div { padding: 7px; }
+  .touch-mode .inventory #health { font-size: 15px; }
+}
+@media (orientation: landscape) and (max-height: 540px) {
+  .touch-mode .hud-top .arena-name { max-width: 180px; }
+  .touch-mode .hud-top .arena-name small { display: none; }
+  .touch-mode .hud-top .match-clock { margin-left: auto; }
+  .touch-mode .hud-bottom { top: max(8px, env(safe-area-inset-top)); width: min(340px, 44%); }
+  .touch-mode .inventory > div { padding: 5px 8px; }
+  .touch-mode .inventory b, .touch-mode .inventory #health { font-size: 17px; }
+  .touch-mode .meter-box { padding: 5px 8px; }
+  .touch-mode #meter-caption { display: none; }
+  .touch-mode .player-list { top: calc(max(8px, env(safe-area-inset-top)) + 52px); max-height: 76px; }
+  .touch-mode .event-feed { top: calc(max(8px, env(safe-area-inset-top)) + 52px); max-width: 22%; }
+  .touch-mode .interact-prompt { bottom: max(18px, env(safe-area-inset-bottom)); max-width: 36%; }
+  .touch-mode .menu-copy { padding-top: 100px; }
+  .touch-mode .centered { padding-top: 90px; padding-bottom: 15px; }
+  .touch-mode .edition { display: none; }
+  .touch-mode .respawn { top: 47%; }
+}
