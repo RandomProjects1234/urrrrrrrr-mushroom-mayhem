@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#242e26" />
+    <meta name="description" content="Oversized thrifted boots. Questionable mushrooms. Real browser multiplayer. Welcome to the forest." />
+    <title>URRRRRRRR: Knee-High Mushroom Mayhem</title>
+  </head>
+  <body>
+    <canvas id="arena" aria-label="Thrifted Mushroom Forest, a 3D multiplayer arena"></canvas>
+    <div class="grain" aria-hidden="true"></div>
+    <div id="mobile-notice" hidden>THIS FOREST NEEDS A KEYBOARD + MOUSE. Desktop is currently recommended.</div>
+    <header id="brand-bar">
+      <a class="brand" href="#" aria-label="URRRRRRRR home"><span class="brand-symbol">U.</span><span>URRRRRRRR<br><small>EST. FIVE MINUTES AGO</small></span></a>
+      <div class="edition"><span class="live-dot"></span> BROWSER PARTY GAME <span class="edition-number">VOL. 001</span></div>
+    </header>
+    <main id="menu" class="screen menu-screen">
+      <div class="menu-copy">
+        <div class="eyebrow"><span class="tag">2–8 PLAYERS</span> ZERO DIGNITY REQUIRED</div>
+        <div class="urrr-title">URRRRRRRRRRRRRRRRRRR</div>
+        <h1>KNEE-HIGH<br><span>MUSHROOM</span><br>MAYHEM<span class="title-dot">.</span></h1>
+        <p class="tagline">The game nobody asked for.</p>
+        <p class="description">A strange forest. Some very good boots.<br>An objectively irresponsible amount of TNT.</p>
+        <label class="name-label" for="display-name">WHAT DO WE CALL YOU?</label>
+        <div class="name-field"><span class="name-dot"></span><input id="display-name" maxlength="18" placeholder="Boot Enjoyer" value="Boot Enjoyer" autocomplete="nickname" /><span>18 MAX</span></div>
+        <div class="menu-actions"><button id="host" class="button primary">HOST GAME <span>↗</span></button><button id="join-open" class="button secondary">JOIN GAME <span>→</span></button></div>
+        <div class="small-actions"><button id="help-open">HOW TO PLAY <span>↗</span></button><button id="settings-open">SETTINGS <span>⚙</span></button><button id="practice">SOLO PRACTICE <span>↗</span></button></div>
+      </div>
+      <div class="scene-caption"><span class="caption-cross">✳</span><div>THRIFTED MUSHROOM FOREST<br><small>YOUR NEW QUESTIONABLE HANGOUT.</small></div><span class="coordinates">49°UR / 123°RR</span></div>
+      <div class="boot-note"><span>100% SECONDHAND</span><b>0% sensible.</b><svg viewBox="0 0 100 45" aria-hidden="true"><path d="M5 5 Q35 42 89 24 M76 16 L90 24 L79 34" /></svg></div>
+    </main>
+    <section id="lobby" class="screen centered" hidden>
+      <div class="panel lobby-panel"><div class="eyebrow"><span class="live-dot"></span> THE CALM BEFORE THE BOOM</div><h2>WELCOME TO<br>THE FOREST.</h2>
+        <div class="room-row"><div><label>ROOM CODE</label><strong id="room-code" tabindex="0"></strong></div><button id="copy-code" class="button secondary compact">COPY CODE ↗</button></div>
+        <div class="list-heading"><span>THE BOOT CREW</span><span id="lobby-count">1 / 8</span></div><div id="lobby-players" class="lobby-players"></div>
+        <p id="lobby-hint" class="muted">Send your friends this page’s URL and the room code.</p>
+        <div class="menu-actions"><button id="start" class="button primary">START THE MAYHEM ↗</button><button id="leave-lobby" class="button secondary compact">LEAVE</button></div>
+      </div>
+    </section>
+    <section id="hud" hidden>
+      <div class="hud-top"><div class="arena-name"><span class="live-dot"></span> THRIFTED MUSHROOM FOREST<small id="hud-room"></small></div><div class="match-clock"><span>TIME LEFT</span><b id="timer">5:00</b></div><button id="pause-open" class="hud-button" aria-label="Game menu">Ⅱ</button></div>
+      <div id="player-list" class="player-list"></div><div id="event-feed" class="event-feed" aria-live="polite"></div>
+      <div id="crosshair" aria-hidden="true">+</div>
+      <div id="interact-prompt" class="interact-prompt" hidden></div>
+      <button id="capture" class="capture-prompt">CLICK THE FOREST TO PLAY<span>Mouse to look · Esc to release</span></button>
+      <div id="respawn" class="respawn" hidden><b>YOUR BOOTS<br>WILL BE BACK.</b><span id="respawn-time">Respawning in 3…</span></div>
+      <div class="hud-bottom"><div class="inventory"><div><label>HEALTH</label><b id="health">♥ ♥ ♥</b></div><div><label>TNT <kbd>LMB</kbd></label><b id="tnt-count">× 3</b></div><div class="mushroom-slot"><label>MUSHROOM <kbd>Q</kbd></label><b id="held">EMPTY</b><small id="buff"></small></div><div><label>SCORE</label><b id="score">0</b></div></div>
+        <div id="meter-box" class="meter-box"><div class="meter-heading"><b>URRRRRRRRRRRRRRRRRRRRRRR</b><span id="meter-number">0%</span></div><div class="meter-track"><div id="meter-fill"></div></div><div id="meter-caption">CAUSE CHAOS. FILL METER. LOSE ALL COMMON SENSE.</div></div>
+        <div class="control-strip"><span><kbd>WASD</kbd> MOVE</span><span><kbd>SHIFT</kbd> SPRINT</span><span><kbd>SPACE</kbd> JUMP / AIR STOMP</span><span><kbd>E</kbd> COLLECT</span><span><kbd>R</kbd> URRRR</span></div>
+      </div>
+      <div id="urrr-banner" class="urrr-banner" hidden>URRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR</div>
+    </section>
+    <section id="results" class="screen centered" hidden><div class="panel results-panel"><div class="eyebrow">THAT WAS ENTIRELY YOUR FAULT.</div><h2>MATCH OVER<span class="title-dot">.</span></h2><p id="winner" class="tagline"></p><div id="scoreboard"></div><div id="awards" class="awards"></div><p id="replay-hint" class="muted"></p><div class="menu-actions"><button id="replay" class="button primary">PLAY AGAIN ↗</button><button id="leave-results" class="button secondary compact">LEAVE</button></div></div></section>
+    <footer id="footer"><span>NO DOWNLOADS. JUST BAD DECISIONS.</span><div><span class="mini-mushroom">♠</span> TNT · MUSHROOMS · THRIFTED BOOTS · URRRRRRRR</div><span>WEBRTC / MADE OF PRIMITIVES</span></footer>
+    <dialog id="join-dialog"><form id="join-form" class="dialog-content"><button type="button" class="dialog-close" data-close aria-label="Close">×</button><div class="eyebrow">YOUR FRIENDS ARE SOMEWHERE IN HERE</div><h2>FIND YOUR<br>URRRRRRRR.</h2><label for="join-code">ROOM CODE</label><input id="join-code" maxlength="20" placeholder="URRRR-X7K2AB" autocomplete="off" spellcheck="false" required /><p class="muted">Ask your host for the code. Everyone opens the same game URL.</p><button id="join-submit" type="submit" class="button primary">ENTER THE FOREST →</button></form></dialog>
+    <dialog id="help-dialog"><div class="dialog-content help-content"><button class="dialog-close" data-close aria-label="Close">×</button><div class="eyebrow">A FIELD GUIDE TO TERRIBLE DECISIONS</div><h2>GOOD BOOTS.<br>BAD IDEAS.</h2><p>Most points after five minutes wins. Blast your friends, stomp from above, or yeet them into the void. Your three hearts respawn with you.</p><div class="help-controls"><div><kbd>WASD</kbd><span>Move</span></div><div><kbd>MOUSE</kbd><span>Look / aim</span></div><div><kbd>SPACE</kbd><span>Jump; press again in the air to stomp</span></div><div><kbd>SHIFT</kbd><span>Sprint</span></div><div><kbd>LMB</kbd><span>Throw TNT (2.1 second fuse)</span></div><div><kbd>E</kbd><span>Collect a nearby mushroom or TNT crate</span></div><div><kbd>Q</kbd><span>Use your mushroom</span></div><div><kbd>R</kbd><span>Full meter → ten seconds of URRRR</span></div></div><div id="mushroom-guide" class="mushroom-guide"></div><p class="muted">TNT and explosive barrels chain together. Higher stomps hit harder. Green pads launch you. Everyone wears ridiculous boots. These are the rules.</p></div></dialog>
+    <dialog id="settings-dialog"><div class="dialog-content"><button class="dialog-close" data-close aria-label="Close">×</button><div class="eyebrow">MAKE THE NONSENSE COMFORTABLE</div><h2>SETTINGS.</h2><label for="volume">SOUND VOLUME <output id="volume-value">45%</output></label><input id="volume" type="range" min="0" max="100" value="45" /><label for="sensitivity">MOUSE SENSITIVITY <output id="sensitivity-value">1.0×</output></label><input id="sensitivity" type="range" min="20" max="200" value="100" /><label for="quality">GRAPHICS</label><select id="quality"><option value="high">CRISP CHAOS</option><option value="low">CHUNKY / LOW POWER</option></select><label class="check-label"><input id="reduce-motion" type="checkbox" /> Reduce camera shake &amp; flashing</label><p class="muted">All sounds are original browser synths. Set volume to zero for peaceful explosions.</p></div></dialog>
+    <dialog id="pause-dialog"><div class="dialog-content"><div class="eyebrow">THE FOREST KEEPS GOING</div><h2>TAKE A<br>BOOT BREAK.</h2><p class="muted">The multiplayer match continues while this menu is open.</p><button id="resume" class="button primary">BACK TO THE CHAOS →</button><button id="pause-settings" class="button secondary">SETTINGS</button><button id="leave-game" class="text-button">LEAVE GAME</button></div></dialog>
+    <div id="toast" role="status" hidden></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
